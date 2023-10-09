@@ -3,12 +3,17 @@ info:
   title: memberApp
   version: "1.0"
 servers:
-  - url: https://merge.digitalent.cloud/api/memberApp/
+  - url: https://merge.digitalent.cloud/api/memberApp
   - url: https://virtserver.swaggerhub.com/filipkowal/memberApp/1.0
     description: SwaggerHub API Auto Mocking
+security:
+  - {}
 paths:
   /{language}/jobs:
     get:
+      operationId: getJobs
+      description: "Get all or filtered and paginated jobs and active filters"
+      summary: "Get all or filtered and paginated jobs and active filters"
       tags:
         - job
       parameters:
@@ -162,6 +167,9 @@ paths:
           description: Language not found
   /{language}/jobs/{id}:
     get:
+      operationId: getJob
+      description: Get individual Job data proving id
+      summary: Get individual Job data proving id
       tags:
         - job
       parameters:
@@ -191,6 +199,9 @@ paths:
           description: Language or jobId not found
   /{language}/filters:
     get:
+      operationId: getFilters
+      description: Get all filters' possible values
+      summary: Get all filters' possible values
       tags:
         - filter
       parameters:
@@ -224,45 +235,11 @@ paths:
                 $ref: "#/components/schemas/Filters"
         "404":
           description: Language not found
-  /{language}/customBoard:
-    get:
-      tags:
-        - customBoard
-      parameters:
-        - name: language
-          in: path
-          required: true
-          style: simple
-          explode: false
-          schema:
-            $ref: "#/components/schemas/Language"
-        - name: userId
-          in: query
-          required: false
-          style: form
-          explode: true
-          schema:
-            $ref: "#/components/schemas/Id"
-        - name: boardId
-          in: query
-          required: false
-          style: form
-          explode: true
-          schema:
-            $ref: "#/components/schemas/Id"
-      responses:
-        "200":
-          description: Get content and styling of a custom board
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CustomBoard"
-        "400":
-          description: Invalid request body supplied
-        "404":
-          description: Language not found
   /{language}/subscribe:
     post:
+      operationId: subscribe
+      description: Subscribe to job search alerts
+      summary: Subscribe to job search alerts
       tags:
         - filter
       parameters:
@@ -287,8 +264,11 @@ paths:
                 type: string
         "400":
           description: Invalid request body supplied
-  /{language}/save:
+  /{language}/jobs/save:
     post:
+      operationId: saveJob
+      description: Save job in users' My Jobs list
+      summary: Save job in users' My Jobs list
       tags:
         - job
       parameters:
@@ -313,8 +293,11 @@ paths:
                 type: string
         "400":
           description: Invalid request body supplied
-  /{language}/apply:
+  /{language}/jobs/apply:
     post:
+      operationId: applyJob
+      description: Apply for a job providing CV and other data
+      summary: Apply for a job
       tags:
         - job
       parameters:
@@ -342,8 +325,11 @@ paths:
                   arrange an interview.
         "400":
           description: Invalid request body supplied
-  /{language}/refer:
+  /{language}/jobs/refer:
     post:
+      operationId: referJob
+      description: Refer a job to a friend providing email and jobId
+      summary: Refer a job to a friend
       tags:
         - job
       parameters:
@@ -575,44 +561,6 @@ components:
                 - Geneva
           items:
             $ref: "#/components/schemas/Filters_regions"
-    Font:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Crimson Pro
-        url:
-          type: string
-          format: url
-          example: https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200..900&display=swap
-        weight:
-          type: string
-          example: "700"
-    CustomBoard:
-      type: object
-      properties:
-        title:
-          type: string
-          example: Hi Anna
-        subtitle:
-          type: string
-          example: Here's a selection of jobs for you
-        logo:
-          type: string
-          format: url
-        fonts:
-          $ref: "#/components/schemas/CustomBoard_fonts"
-        backgroundColor:
-          type: string
-          format: rgb
-          example: "000000"
-        textColor:
-          type: string
-          format: rgb
-          example: ffffff
-        backgroundImage:
-          type: string
-          format: url
     inline_response_200:
       type: object
       properties:
@@ -642,14 +590,17 @@ components:
     save_body:
       type: object
       properties:
-        email:
+        userId:
           type: string
-          format: email
+          format: userId
         jobId:
           type: string
     apply_body:
       type: object
       properties:
+        userId:
+          type: string
+          format: userId
         email:
           type: string
           format: email
@@ -691,26 +642,9 @@ components:
           type: array
           items:
             type: string
-    CustomBoard_fonts:
-      type: object
-      properties:
-        title:
-          $ref: "#/components/schemas/Font"
-        interface:
-          $ref: "#/components/schemas/Font"
-        body:
-          $ref: "#/components/schemas/Font"
   parameters:
     UserId:
       name: userId
-      in: query
-      required: false
-      style: form
-      explode: true
-      schema:
-        $ref: "#/components/schemas/Id"
-    BoardId:
-      name: boardId
       in: query
       required: false
       style: form
